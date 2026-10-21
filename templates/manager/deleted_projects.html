@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Deleted Projects - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">Deletion History</h3>
+    <a href="{{ url_for('manager.projects') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Projects
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+
+        {% if history %}
+
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Original ID</th>
+                    <th>Deleted By</th>
+                    <th>Deleted At</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for h in history %}
+                <tr>
+                    <td>{{ h.project_name }}</td>
+                    <td>#{{ h.project_id }}</td>
+                    <td>{{ h.deleted_by_name }}</td>
+                    <td>{{ h.deleted_at }}</td>
+                    <td>{{ h.reason or "-" }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        {% else %}
+
+        <div class="text-center py-5">
+            <i class="bi bi-trash display-4 text-muted"></i>
+            <h5 class="mt-3">No Deleted Projects</h5>
+            <p class="text-muted">Deleted project history will appear here.</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

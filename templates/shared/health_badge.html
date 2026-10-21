@@ -1,0 +1,11 @@
+{% if health %}
+    {% if health.level == "green" %}
+        <span class="badge bg-success" title="{{ health.reason }}">&#9679; On Track</span>
+    {% elif health.level == "yellow" %}
+        <span class="badge bg-warning text-dark" title="{{ health.reason }}">&#9679; At Risk</span>
+    {% elif health.level == "red" %}
+        <span class="badge bg-danger" title="{{ health.reason }}">&#9679; Critical</span>
+    {% else %}
+        <span class="badge bg-secondary" title="{{ health.reason }}">&#9679; {{ health.reason }}</span>
+    {% endif %}
+{% endif %}

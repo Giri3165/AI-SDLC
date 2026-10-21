@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.project_name }} - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">
+            {{ project.project_name }}
+            {% include "shared/health_badge.html" with context %}
+        </h3>
+        <p class="text-muted mb-0">Client: {{ project.client_name }}</p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        {% if project.status == "Pending" %}
+        <form method="POST" action="{{ url_for('manager.approve_project', project_id=project.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-lg"></i> Approve
+            </button>
+        </form>
+
+        <form method="POST" action="{{ url_for('manager.reject_project', project_id=project.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-x-lg"></i> Reject
+            </button>
+        </form>
+        {% endif %}
+
+        <a href="{{ url_for('manager.projects') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-8">
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Description</h5>
+                <p class="text-muted mb-0">{{ project.description }}</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <h5 class="fw-bold mb-0">Progress</h5>
+                    <strong>{{ project.progress }}%</strong>
+                </div>
+                <div class="progress" style="height:12px;">
+                    <div class="progress-bar" style="width:{{ project.progress }}%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Requirements</h5>
+                {% if requirements %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Title</th><th>Priority</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for r in requirements %}
+                        <tr><td>{{ r.title }}</td><td>{{ r.priority }}</td><td>{{ r.status }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No requirements added yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Tasks</h5>
+                {% if tasks %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Task</th><th>Assigned</th><th>Status</th><th>Progress</th></tr></thead>
+                    <tbody>
+                        {% for t in tasks %}
+                        <tr>
+                            <td>{{ t.title }}</td>
+                            <td>{{ t.assignee_name or "Unassigned" }}</td>
+                            <td>{{ t.status }}</td>
+                            <td>{{ t.progress }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No tasks yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Reported Bugs</h5>
+                {% if bugs %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Bug</th><th>Severity</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for b in bugs %}
+                        <tr><td>{{ b.title }}</td><td>{{ b.severity }}</td><td>{{ b.status }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No bugs reported.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Deployment History</h5>
+                {% if deployments %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Version</th><th>Environment</th><th>Status</th><th>Date</th></tr></thead>
+                    <tbody>
+                        {% for d in deployments %}
+                        <tr>
+                            <td>{{ d.version }}</td>
+                            <td>{{ d.environment }}</td>
+                            <td>{{ d.status }}</td>
+                            <td>{{ d.deployment_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No deployments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Development Summary</h5>
+                <div class="row text-center">
+                    <div class="col-3"><h3 class="text-primary">{{ requirement_count }}</h3><small class="text-muted">Requirements</small></div>
+                    <div class="col-3"><h3 class="text-success">{{ task_count }}</h3><small class="text-muted">Tasks</small></div>
+                    <div class="col-3"><h3 class="text-danger">{{ bug_count }}</h3><small class="text-muted">Bugs</small></div>
+                    <div class="col-3"><h3 class="text-dark">{{ deployment_count }}</h3><small class="text-muted">Deployments</small></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Project Information</h5>
+                <table class="table table-borderless mb-0">
+                    <tr><th class="text-muted">Category</th><td>{{ project.category }}</td></tr>
+                    <tr><th class="text-muted">Priority</th><td>{{ project.priority }}</td></tr>
+                    <tr><th class="text-muted">Status</th><td>{{ project.status }}</td></tr>
+                    <tr><th class="text-muted">Progress</th><td>{{ project.progress }}%</td></tr>
+                    <tr><th class="text-muted">Start Date</th><td>{{ project.start_date or "-" }}</td></tr>
+                    <tr><th class="text-muted">Delivery Date</th><td>{{ project.end_date or "-" }}</td></tr>
+                    <tr><th class="text-muted">Project Manager</th><td>{{ project.manager_name or "Not assigned" }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Budget &amp; Time Tracking</h5>
+
+                <table class="table table-borderless mb-3">
+                    <tr><th class="text-muted">Hours Logged</th><td>{{ total_hours }} hrs</td></tr>
+                    <tr><th class="text-muted">Hourly Rate</th><td>{{ "$%.2f"|format(project.hourly_rate) if project.hourly_rate else "Not set" }}</td></tr>
+                    <tr><th class="text-muted">Spent So Far</th>
+                        <td>
+                            {% if total_cost is not none %}
+                                <strong>${{ "%.2f"|format(total_cost) }}</strong>
+                            {% else %}
+                                <span class="text-muted">Set an hourly rate to calculate</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr><th class="text-muted">Budget</th>
+                        <td>
+                            {% if project.budget_amount %}
+                                ${{ "%.2f"|format(project.budget_amount) }}
+                                {% if total_cost is not none %}
+                                    {% if total_cost > project.budget_amount %}
+                                        <span class="badge bg-danger ms-1">Over budget</span>
+                                    {% elif total_cost > project.budget_amount * 0.9 %}
+                                        <span class="badge bg-warning text-dark ms-1">Near limit</span>
+                                    {% else %}
+                                        <span class="badge bg-success ms-1">Within budget</span>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <form method="POST" action="{{ url_for('manager.set_budget', project_id=project.id) }}" class="row g-2">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="col-6">
+                        <label class="form-label small">Hourly Rate ($)</label>
+                        <input type="number" name="hourly_rate" class="form-control form-control-sm"
+                               step="0.01" min="0" value="{{ project.hourly_rate or '' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small">Budget ($)</label>
+                        <input type="number" name="budget_amount" class="form-control form-control-sm"
+                               step="0.01" min="0" value="{{ project.budget_amount or '' }}">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100 mt-1">
+                            Update Budget
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

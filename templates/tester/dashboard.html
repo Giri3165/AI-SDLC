@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Tester Dashboard - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<h3 class="fw-bold mb-4">Tester Dashboard</h3>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">In Testing</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ testing_projects }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Open Bugs</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ open_bugs }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Unassigned Bugs</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ unassigned_bugs }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Projects Ready for Testing</h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if testing_list %}
+
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr><th>Project</th><th width="30%">Progress</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for p in testing_list %}
+                <tr>
+                    <td>{{ p.project_name }}</td>
+                    <td>
+                        <div class="progress" style="height:8px;">
+                            <div class="progress-bar" style="width:{{ p.progress }}%;"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('tester.project_tasks', project_id=p.id) }}"
+                           class="btn btn-outline-dark btn-sm">View Completed Tasks</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <p class="text-muted mb-0">No projects currently in testing.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

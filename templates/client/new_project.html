@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Register New Project - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Register New Project</h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST">
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" name="project_name" class="form-control"
+                               value="{{ form_values.project_name if form_values else '' }}"
+                               placeholder="Enter project name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4"
+                                  placeholder="Describe your project..." required>{{ form_values.description if form_values else '' }}</textarea>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="" selected disabled>Select category</option>
+                                {% for c in categories %}
+                                <option value="{{ c }}"
+                                    {% if form_values and form_values.category == c %}selected{% endif %}>
+                                    {{ c }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select" required>
+                                <option value="Low" {% if form_values and form_values.priority == "Low" %}selected{% endif %}>Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High" {% if form_values and form_values.priority == "High" %}selected{% endif %}>High</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Expected Delivery Date</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('client.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Register Project</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

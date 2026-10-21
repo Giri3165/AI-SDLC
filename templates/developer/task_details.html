@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.title }} - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">{{ task.title }}</h3>
+        <p class="text-muted mb-0">
+            {{ task.project_name }} &middot; Requirement: {{ task.requirement_title }}
+        </p>
+    </div>
+
+    <a href="{{ url_for('developer.tasks') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-7">
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Description</h5>
+                <p class="text-muted mb-0">{{ task.description or "No description provided." }}</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Reported Bugs on This Task</h5>
+
+                {% if bugs %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Bug</th><th>Severity</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for b in bugs %}
+                        <tr><td>{{ b.title }}</td><td>{{ b.severity }}</td><td>{{ b.status }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No bugs reported on this task.</p>
+                {% endif %}
+
+                <a href="{{ url_for('developer.report_bug', task_id=task.id) }}"
+                   class="btn btn-outline-danger btn-sm mt-3">
+                    <i class="bi bi-bug"></i> Report a Bug
+                </a>
+
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Time Logged</h5>
+                    <span class="badge bg-secondary">{{ total_hours }} hrs total</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('developer.log_time', task_id=task.id) }}" class="row g-2 mb-3">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="col-4">
+                        <input type="number" name="hours" class="form-control form-control-sm"
+                               step="0.25" min="0.25" max="24" placeholder="Hours" required>
+                    </div>
+                    <div class="col-4">
+                        <input type="date" name="log_date" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Log Time</button>
+                    </div>
+                    <div class="col-12">
+                        <input type="text" name="notes" class="form-control form-control-sm"
+                               placeholder="What did you work on? (optional)">
+                    </div>
+                </form>
+
+                {% if time_logs %}
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Date</th><th>Hours</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        {% for log in time_logs %}
+                        <tr>
+                            <td>{{ log.log_date }}</td>
+                            <td>{{ log.hours }}</td>
+                            <td class="text-muted">{{ log.notes or "-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No time logged yet on this task.</p>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-5">
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Task Info</h5>
+                <table class="table table-borderless mb-0">
+                    <tr><th class="text-muted">Priority</th><td>{{ task.priority }}</td></tr>
+                    <tr><th class="text-muted">Due Date</th><td>{{ task.due_date or "-" }}</td></tr>
+                    <tr><th class="text-muted">Current Status</th><td>{{ task.status }}</td></tr>
+                    <tr><th class="text-muted">Progress</th><td>{{ task.progress }}%</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Update Task</h5>
+
+                <form method="POST" action="{{ url_for('developer.update_task', task_id=task.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            {% for s in statuses %}
+                            <option value="{{ s }}" {% if task.status == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Progress (%)</label>
+                        <input type="number" name="progress" class="form-control"
+                               min="0" max="100" value="{{ task.progress }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Save Update</button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

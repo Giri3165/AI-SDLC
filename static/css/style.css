@@ -1,0 +1,19 @@
+body {
+    background: #f4f6f9;
+}
+
+.card {
+    border-radius: 14px;
+}
+
+.navbar-brand i {
+    margin-right: 6px;
+}
+
+#username-message,
+#password-message {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    margin-bottom: 14px;
+}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Create Task - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Create Task</h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                {% if not requirements %}
+                <div class="alert alert-warning">
+                    No approved requirements available. Add a requirement first.
+                </div>
+                {% endif %}
+
+                {% if not developers %}
+                <div class="alert alert-warning">
+                    No developer accounts exist yet. Register a Developer account first.
+                </div>
+                {% endif %}
+
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Requirement</label>
+                        <select name="requirement_id" class="form-select" required
+                                {% if not requirements %}disabled{% endif %}>
+                            <option value="" selected disabled>Select requirement</option>
+                            {% for r in requirements %}
+                            <option value="{{ r.id }}"
+                                {% if form_values and form_values.requirement_id|string == r.id|string %}selected{% endif %}>
+                                {{ r.project_name }} &mdash; {{ r.title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Task Title</label>
+                        <input type="text" name="title" class="form-control"
+                               value="{{ form_values.title if form_values else '' }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3">{{ form_values.description if form_values else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Assign To</label>
+                        <select name="assigned_to" class="form-select" required
+                                {% if not developers %}disabled{% endif %}>
+                            <option value="" selected disabled>Select developer</option>
+                            {% for d in developers %}
+                            <option value="{{ d.id }}"
+                                {% if form_values and form_values.assigned_to|string == d.id|string %}selected{% endif %}>
+                                {{ d.fullname }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select">
+                                {% for p in priorities %}
+                                <option value="{{ p }}" {% if p == "Medium" %}selected{% endif %}>{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" name="due_date" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{{ url_for('task.tasks') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary"
+                                {% if not requirements or not developers %}disabled{% endif %}>
+                            Create Task
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

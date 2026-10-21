@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}
+Complete Your Profile - AI-SDLC
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- ================================================= -->
+                    <!-- HEADING -->
+                    <!-- ================================================= -->
+
+                    <div class="mb-4">
+
+                        <h3 class="fw-bold mb-2">
+                            Complete Your Profile
+                        </h3>
+
+                        <p class="text-muted mb-0">
+                            Set your username and create your new password.
+                        </p>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- SINGLE FORM -->
+                    <!-- ================================================= -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('profile.save_profile') }}"
+                    >
+
+                        <!-- CSRF TOKEN -->
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+
+                        <!-- ================================================= -->
+                        <!-- FULL NAME -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="fullname"
+                                class="form-label fw-semibold"
+                            >
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="fullname"
+                                class="form-control"
+                                value="{{ user.fullname }}"
+                                readonly
+                            >
+
+                            <div class="form-text">
+                                Full name cannot be changed.
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- EMAIL -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="email"
+                                class="form-label fw-semibold"
+                            >
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                class="form-control"
+                                value="{{ user.email }}"
+                                readonly
+                            >
+
+                            <div class="form-text">
+                                Email cannot be changed.
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- ROLE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="role"
+                                class="form-label fw-semibold"
+                            >
+                                Role
+                            </label>
+
+                            <input
+                                type="text"
+                                id="role"
+                                class="form-control"
+                                value="{{ user.role }}"
+                                readonly
+                            >
+
+                            <div class="form-text">
+                                Role can only be changed by an Administrator.
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- USERNAME -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="username"
+                                class="form-label fw-semibold"
+                            >
+                                Username
+                            </label>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                class="form-control"
+                                value="{{ user.username }}"
+                                autocomplete="username"
+                                required
+                            >
+
+                            <div class="form-text">
+                                Username must be unique.
+                            </div>
+
+                        </div>
+
+
+                        <hr class="my-4">
+
+
+                        <!-- ================================================= -->
+                        <!-- CURRENT PASSWORD -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="currentPassword"
+                                class="form-label fw-semibold"
+                            >
+                                Current Password
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="password"
+                                    id="currentPassword"
+                                    name="current_password"
+                                    class="form-control"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword(
+                                        'currentPassword',
+                                        this
+                                    )"
+                                    title="Show password"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- NEW PASSWORD -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="newPassword"
+                                class="form-label fw-semibold"
+                            >
+                                New Password
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    name="new_password"
+                                    class="form-control"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword(
+                                        'newPassword',
+                                        this
+                                    )"
+                                    title="Show password"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                            <div class="form-text">
+                                Minimum 8 characters.
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- CONFIRM PASSWORD -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="confirmPassword"
+                                class="form-label fw-semibold"
+                            >
+                                Confirm New Password
+                            </label>
+
+                            <div class="input-group">
+
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirm_password"
+                                    class="form-control"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword(
+                                        'confirmPassword',
+                                        this
+                                    )"
+                                    title="Show password"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- SAVE & CONTINUE -->
+                        <!-- ================================================= -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary px-4"
+                        >
+                            Save & Continue
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================= -->
+<!-- PASSWORD SHOW / HIDE -->
+<!-- ============================================================= -->
+
+<script>
+
+function togglePassword(inputId, button) {
+
+    const input = document.getElementById(inputId);
+
+    if (!input) {
+        return;
+    }
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+
+        button.title = "Hide password";
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "👁";
+
+        button.title = "Show password";
+    }
+
+}
+
+</script>
+
+{% endblock %}

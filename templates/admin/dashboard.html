@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - AI-SDLC{% endblock %}
+
+{% block content %}
+
+<h3 class="fw-bold mb-4">Admin Dashboard</h3>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Users</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_users }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Projects</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_projects }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Requirements</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_requirements }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Tasks</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_tasks }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Bugs</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_bugs }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <small class="text-muted text-uppercase">Deployments</small>
+                <h2 class="fw-bold mt-2 mb-0">{{ total_deployments }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Users by Role</h5>
+            </div>
+            <div class="card-body">
+                {% if role_breakdown %}
+                <table class="table table-sm mb-0">
+                    {% for r in role_breakdown %}
+                    <tr><td>{{ r.role }}</td><td class="text-end"><strong>{{ r.c }}</strong></td></tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No users yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Projects by Status</h5>
+            </div>
+            <div class="card-body">
+                {% if project_status_breakdown %}
+                <table class="table table-sm mb-0">
+                    {% for p in project_status_breakdown %}
+                    <tr><td>{{ p.status }}</td><td class="text-end"><strong>{{ p.c }}</strong></td></tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">No projects yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ai_sdlc
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Runs automatically ONLY the first time the volume is created,
+      # so this loads your full schema (including password_resets) on
+      # a fresh install. It will NOT re-run on subsequent starts, and
+      # will NOT overwrite existing data.
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD:-rootpassword}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # These override whatever DB_* values are in your .env, because
+      # inside Docker the database is reached by service name ("db"),
+      # never "localhost". Everything else in .env (SECRET_KEY, SMTP_*,
+      # ANTHROPIC_API_KEY) is used as-is via env_file above.
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      DB_NAME: ai_sdlc
+    ports:
+      - "5000:5000"
+
+volumes:
+  db_data:
